@@ -5,21 +5,19 @@ from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
 from PIL import ImageTk, Image
-import mysql.connector
-from mysql.connector import Error
+
 from tkinter import simpledialog
 import random
 import datetime
 
+#theme
+from config.theme import colors
+from config.db.connection_manager import Connection
 
-# Configuración de la conexión a la base de datos
-conexion = mysql.connector.connect(
-    host="",
-    user="",
-    password="*********",
-    database="sweet_fruits",
-    port=""
-)
+logoRoute="assets/images/Logo_Sweet.png"
+
+connection = Connection()
+
 
 
 class Producto():
@@ -27,7 +25,7 @@ class Producto():
     def __init__(self, ventana):
         menubar = Menu(ventana)
         ventana.title("Software Sweet Fruits")
-        ventana.config(bd=10, menu=menubar, bg="#E0FFCD")
+        ventana.config(bd=10, menu=menubar, bg=colors.BACKGROUND_COLOR)
 
         # *******************Menu******************************************
         # Acciones Menu
@@ -82,14 +80,14 @@ class Producto():
         self.Label_titulo_crud.grid(row=0, column=0, padx=5, pady=5)
         # ************************ Titulo *********************************
         self.titulo_crud = Label(self.Label_titulo_crud, text="Inventarios Sweet Fruits", fg="black",
-                                 font=("Comic Sans", 17, "bold"), bg="#E0FFCD")
+                                 font=("Comic Sans", 17, "bold"), bg=colors.BACKGROUND_COLOR)
         self.titulo_crud.grid(row=0, column=2)
 
         # ****************************** Logo empresa ***************************************
-        self.frame_logo.config(bd=0, bg="#E0FFCD")
+        self.frame_logo.config(bd=0, bg=colors.BACKGROUND_COLOR)
         self.frame_logo.grid(row=1, column=0, padx=5, pady=5)
 
-        logo = Image.open("C:/Users/Sebastian Quimbayo/Documents/Cursos_Certificaciones/Programacion_Python/python/Proyecto_Grado/Logo_Sweet.png")
+        logo = Image.open(logoRoute)
         nueva_imagen = logo.resize((60, 60))
         render = ImageTk.PhotoImage(nueva_imagen)
         label_imagen = Label(self.frame_logo, image=render)
@@ -136,7 +134,7 @@ class Producto():
         self.id_recurso.grid(row=2, column=3, padx=10, pady=8)
 
         # ************************* Frame botones ****************************
-        self.frame_botones_registro.config(bd=0, bg="#E0FFCD")
+        self.frame_botones_registro.config(bd=0, bg=colors.BACKGROUND_COLOR)
         self.frame_botones_registro.grid(row=3, column=0, padx=5, pady=5)
 
         # ****************************** Botones Base de Datos **************************
@@ -183,20 +181,19 @@ class Producto():
 
     def widgets_facturacion(self):
 
-        self.Label_titulo_buscador.config(bd=0, bg="#E0FFCD")
+        self.Label_titulo_buscador.config(bd=0, bg=colors.BACKGROUND_COLOR)
         self.Label_titulo_buscador.grid(row=0, column=0, padx=5, pady=5)
 
         # ************************ Titulo *********************************
         self.titulo_buscador = Label(self.Label_titulo_buscador, text="Facturación Sweet Fruits", fg="black",
-                                     font=("Comic Sans", 17, "bold"), bg="#E0FFCD")
+                                     font=("Comic Sans", 17, "bold"), bg=colors.BACKGROUND_COLOR)
         self.titulo_buscador.grid(row=0, column=0)
 
         # ****************************** Logo empresa ***************************************
-        self.frame_logo.config(bd=0, bg="#E0FFCD")
+        self.frame_logo.config(bd=0, bg=colors.BACKGROUND_COLOR)
         self.frame_logo.grid(row=0, column=1, padx=5, pady=5)
 
-        logo = Image.open(
-            "C:/Users/Sebastian Quimbayo/Documents/Cursos_Certificaciones/Programacion_Python/python/Proyecto_Grado/Logo_Sweet.png")
+        logo = Image.open(logoRoute)
         nueva_imagen = logo.resize((60, 60))
         render = ImageTk.PhotoImage(nueva_imagen)
         label_imagen = Label(self.frame_logo, image=render)
@@ -204,11 +201,11 @@ class Producto():
         label_imagen.grid(row=0, column=0, padx=15, pady=5)
 
         # ************************* Frame buscar *****************************
-        self.frame_buscar_producto.config(bd=2, bg="#E0FFCD")
+        self.frame_buscar_producto.config(bd=2, bg=colors.BACKGROUND_COLOR)
         self.frame_buscar_producto.grid(row=2, column=0, padx=5, pady=5)
 
         # ****************************** Formulario Buscar *****************************
-        self.label_buscar = Label(self.frame_buscar_producto, text="Buscar Por: ", bg="#E0FFCD",
+        self.label_buscar = Label(self.frame_buscar_producto, text="Buscar Por: ", bg=colors.BACKGROUND_COLOR,
                                   font=("Comic Sans", 10, "bold"))
         self.label_buscar.grid(row=0, column=0, sticky='s', padx=5, pady=5)
         self.combo_buscar = ttk.Combobox(self.frame_buscar_producto, values=["Codigo", "Nombre"], width=22,
@@ -217,14 +214,14 @@ class Producto():
         self.combo_buscar.grid(row=0, column=1, padx=5, pady=5)
 
         label_codigo_codigo = Label(self.frame_buscar_producto, text="Codigo / Nombre del producto: ",
-                                font=("Comic Sans", 10, "bold"), bg="#E0FFCD")
+                                font=("Comic Sans", 10, "bold"), bg=colors.BACKGROUND_COLOR)
         label_codigo_codigo.grid(row=0, column=2, sticky='s', padx=5, pady=5)
         self.codigo_nombre = Entry(self.frame_buscar_producto, width=25)
         self.codigo_nombre.focus()
         self.codigo_nombre.grid(row=0, column=3, padx=10, pady=5)
 
         # ******************************* Frame marco Botones *********************************
-        self.frame_botones_fac.config(bd=0, bg="#E0FFCD")
+        self.frame_botones_fac.config(bd=0, bg=colors.BACKGROUND_COLOR)
         self.frame_botones_fac.grid(row=2, column=1, padx=5, pady=5)
 
         self.boton_buscar = Button(self.frame_botones_fac, text="BUSCAR", command=self.buscar_productos, height=2,
@@ -275,7 +272,7 @@ class Producto():
         texto_total.grid(row=1, column=5, padx=10)
 
         # Etiquetas de factura
-        self.frame_factura.config(bd=2, bg="#E0FFCD")
+        self.frame_factura.config(bd=2, bg=colors.BACKGROUND_COLOR)
         self.frame_factura.grid(row=4, column=1, padx=5, pady=0, sticky='nsew')
 
         # Area de recibo
@@ -300,15 +297,15 @@ class Producto():
         self.frame_factura.grid_remove()
 
     def widgets_informacion(self):
-        self.Label_informacion.config(bd=0, bg="#E0FFCD")
+        self.Label_informacion.config(bd=0, bg=BACKGROUND_COLOR)
         self.Label_informacion.grid(row=0, column=0)
         # *************************** Titulo ***************************
         self.Label_titulo = Label(self.Label_informacion, text="SOFTWARE DE FACTURACIÓN Y GESTIÓN DE INVENTARIOS",
-                                  fg="black", bg="#E0FFCD", font=("Comic Sans", 25, "bold"), padx=137, pady=20)
+                                  fg="black", bg=colors.BACKGROUND_COLOR, font=("Comic Sans", 25, "bold"), padx=137, pady=20)
         self.Label_titulo.grid(row=0, column=0)
 
         # ************************** Logo ******************************
-        logo = Image.open("C:/Users/Sebastian Quimbayo/Documents/Cursos_Certificaciones/Programacion_Python/python/Proyecto_Grado/Logo_Sweet.png")
+        logo = Image.open(logoRoute)
         nueva_imagen = logo.resize((170, 170))
         render = ImageTk.PhotoImage(nueva_imagen)
         label_imagen = Label(self.Label_informacion, image=render)
@@ -317,7 +314,7 @@ class Producto():
 
         # ******************* Información de la empresa *************************
         self.Label_titulo = Label(self.Label_informacion, text="> MISIÓN ", fg="black",
-                                  font=("Comic Sans", 18, "bold"), bg="#E0FFCD")
+                                  font=("Comic Sans", 18, "bold"), bg=colors.BACKGROUND_COLOR)
         self.Label_titulo.grid(row=2, column=0, sticky=W, padx=30, pady=10)
 
         # Texto de la misión de la empresa
@@ -327,11 +324,11 @@ class Producto():
             "sostenible en el sector rural colombiano.")
 
         self.Label_mision = Label(self.Label_informacion, text=texto_mision, fg="black",
-                                     font=("Arial", 12), wraplength=700, justify="left", bg="#E0FFCD")
+                                     font=("Arial", 12), wraplength=700, justify="left", bg=colors.BACKGROUND_COLOR)
         self.Label_mision.grid(row=3, column=0, sticky="w", padx=30, pady=10)
 
         self.Label_titulo = Label(self.Label_informacion, text="> VISIÓN ", fg="black",
-                                  font=("Comic Sans", 18, "bold"), bg="#E0FFCD")
+                                  font=("Comic Sans", 18, "bold"), bg=colors.BACKGROUND_COLOR)
         self.Label_titulo.grid(row=4, column=0, sticky=W, padx=30, pady=10)
 
         # Texto de la visión de la empresa
@@ -341,11 +338,11 @@ class Producto():
             "de calidad y sostenibilidad corporativa.")
 
         self.Label_vision = Label(self.Label_informacion, text=texto_vision, fg="black",
-                                  font=("Arial", 12), wraplength=700, justify="left", bg="#E0FFCD")
+                                  font=("Arial", 12), wraplength=700, justify="left", bg=colors.BACKGROUND_COLOR)
         self.Label_vision.grid(row=5, column=0, sticky="w", padx=30, pady=10)
 
         self.Label_titulo = Label(self.Label_informacion, text="Sweet Fruits", fg="black",
-                                  font=("Comic Sans", 10, "bold"), bg="#E0FFCD")
+                                  font=("Comic Sans", 10, "bold"), bg=colors.BACKGROUND_COLOR)
         self.Label_titulo.grid(row=6, column=0, pady=60)
 
         # Remove
