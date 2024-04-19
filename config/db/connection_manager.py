@@ -1,6 +1,4 @@
-from mysql.connector import Error
-
-import pymysql
+import mysql.connector
 import sys
 from config import config_variables as config
 
@@ -15,17 +13,12 @@ class Connection:
         self.connection = self.createConnection()
 
     def createConnection(self):
-        return pymysql.connect(
-            charset="utf8mb4",
-            connect_timeout=timeout,
-            cursorclass=pymysql.cursors.DictCursor,
-            db=config.DATABASE_NAME,
+        return mysql.connector.connect(
             host=config.HOST,
-            password=config.PASSWORD,
-            read_timeout=timeout,
-            port=int(config.PORT),
             user=config.USER,
-            write_timeout=timeout,
+            password=config.PASSWORD,
+            database=config.DATABASE_NAME,
+            port=config.PORT,
         )
 
     def getConnection(self):
