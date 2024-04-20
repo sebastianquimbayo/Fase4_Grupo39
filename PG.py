@@ -4,15 +4,10 @@ Software de facturación y gestión de inventarios para la empresa Sweet Fruits 
 
 from mysql.connector import Error
 from tkinter import (
-    ttk,
     messagebox,
     END,
     W,
-    StringVar,
-    Button,
-    Entry,
     Label,
-    Toplevel,
     simpledialog
 )
 from PIL import ImageTk, Image
@@ -199,56 +194,6 @@ class Producto:
 
     # ********************************* CRUD *************************************
 
-    def obtener_productos(self):
-        records = self.tree.get_children()
-        for element in records:
-            self.tree.delete(element)
-
-        query = "SELECT * FROM producto ORDER BY nombre_producto DESC"
-        db_rows = ConfigSingleton().dbUtils.ejecutar_consulta(query)
-        for row in db_rows:
-            if len(row) >= 6:  # Verificar que la tupla tenga al menos 6 elementos
-                self.tree.insert(
-                    "", 0, text=row[0], values=(row[1], row[2], row[3], row[4], row[5])
-                )
-            else:
-                print("La fila no tiene la cantidad correcta de elementos:", row)
-
-    def agregar_producto(self):
-        if self.validar_formulario_completo() and self.validar_registrar():
-            try:
-                # Establecer la conexión a la base de datos MySQL
-                conexion = mysql.connector.connect(
-                    host="", user="", password="*********", database="", port=""
-                )
-                if conexion.is_connected():
-                    query = (
-                        "INSERT INTO producto (id_producto, nombre_producto, categoria_producto, valor_producto, "
-                        "cantidad_producto, id_recurso) VALUES(%s, %s, %s, %s, %s, %s)"
-                    )
-                    parameters = (
-                        self.id_producto.get(),
-                        self.nombre_producto.get(),
-                        self.categoria_producto.get(),
-                        self.valor_producto.get(),
-                        self.cantidad_producto.get(),
-                        self.id_recurso.get(),
-                    )
-                    ConfigSingleton().dbUtils.ejecutar_consulta(query, parameters)
-                    messagebox.showinfo(
-                        "REGISTRO EXITOSO",
-                        f"Producto registrado: {self.nombre_producto.get()}",
-                    )
-                    print("REGISTRADO")
-                    self.limpiar_formulario()
-            except Error as e:
-                print("Error al conectar a MySQL:", e)
-            finally:
-                if conexion.is_connected():
-                    conexion.close()
-                    print("Conexión a MySQL cerrada")
-        self.obtener_productos()
-
     def editar_producto(self):
         try:
             id_producto = self.tree.item(self.tree.selection())["text"]
@@ -262,97 +207,8 @@ class Producto:
         precio_producto = self.tree.item(self.tree.selection())["values"][3]
         id_recurso = self.tree.item(self.tree.selection())["values"][4]
 
-        self.Ventana_editar = Toplevel()
-        self.Ventana_editar.title("EDITAR PRODUCTO")
-        self.Ventana_editar.resizable(0, 0)
-
-        # Valores ventana editar
-        label_codigo = Label(
-            self.Ventana_editar,
-            text="Codigo del producto: ",
-            font=("Comic Sans", 10, "bold"),
-        ).grid(row=0, column=0, sticky="s", padx=5, pady=8)
-        nuevo_id_producto = Entry(
-            self.Ventana_editar,
-            textvariable=StringVar(self.Ventana_editar, value=id_producto),
-            width=25,
-        )
-        nuevo_id_producto.grid(row=0, column=1, padx=5, pady=8)
-
-        label_nombre = Label(
-            self.Ventana_editar,
-            text="Nombre del producto: ",
-            font=("Comic Sans", 10, "bold"),
-        ).grid(row=1, column=0, sticky="s", padx=5, pady=8)
-        nuevo_nombre_producto = Entry(
-            self.Ventana_editar,
-            textvariable=StringVar(self.Ventana_editar, value=nombre_producto),
-            width=25,
-        )
-        nuevo_nombre_producto.grid(row=1, column=1, padx=5, pady=8)
-
-        label_categoria = Label(
-            self.Ventana_editar, text="Categoria: ", font=("Comic Sans", 10, "bold")
-        ).grid(row=2, column=0, sticky="s", padx=5, pady=9)
-        nuevo_categoria_producto = ttk.Combobox(
-            self.Ventana_editar,
-            values=["Fruta Deshidratada", "Frutos Secos"],
-            width=22,
-            state="readonly",
-        )
-        nuevo_categoria_producto.set(categoria_producto)
-        nuevo_categoria_producto.grid(row=2, column=1, padx=5, pady=0)
-
-        label_cantidad = Label(
-            self.Ventana_editar, text="Precio (S/.): ", font=("Comic Sans", 10, "bold")
-        ).grid(row=0, column=2, sticky="s", padx=5, pady=8)
-        nueva_valor_producto = Entry(
-            self.Ventana_editar,
-            textvariable=StringVar(self.Ventana_editar, value=cantidad_producto),
-            width=25,
-        )
-        nueva_valor_producto.grid(row=0, column=3, padx=5, pady=8)
-
-        label_precio = Label(
-            self.Ventana_editar, text="Cantidad: ", font=("Comic Sans", 10, "bold")
-        ).grid(row=1, column=2, sticky="s", padx=5, pady=8)
-        nuevo_cantidad_producto = Entry(
-            self.Ventana_editar,
-            textvariable=StringVar(self.Ventana_editar, value=precio_producto),
-            width=25,
-        )
-        nuevo_cantidad_producto.grid(row=1, column=3, padx=5, pady=8)
-
-        label_recurso = Label(
-            self.Ventana_editar, text="ID Recurso: ", font=("Comic Sans", 10, "bold")
-        ).grid(row=2, column=2, sticky="s", padx=10, pady=8)
-        nueva_id_recurso = Entry(
-            self.Ventana_editar,
-            textvariable=StringVar(self.Ventana_editar, value=id_recurso),
-            width=25,
-        )
-        nueva_id_recurso.grid(row=2, column=3, padx=10, pady=8)
-
-        boton_actualizar = Button(
-            self.Ventana_editar,
-            text="ACTUALIZAR",
-            command=lambda: self.actualizar_producto(
-                nuevo_id_producto.get(),
-                nuevo_nombre_producto.get(),
-                nuevo_categoria_producto.get(),
-                nueva_valor_producto.get(),
-                nuevo_cantidad_producto.get(),
-                nueva_id_recurso.get(),
-                id_producto,
-            ),
-            height=2,
-            width=20,
-            bg="black",
-            fg="white",
-            font=("Comic Sans", 10, "bold"),
-        )
-        boton_actualizar.grid(row=3, column=1, columnspan=2, padx=10, pady=15)
-
+        
+        
         self.Ventana_editar.mainloop()
 
     def actualizar_producto(

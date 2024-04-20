@@ -34,7 +34,7 @@ class InventoryController:
             pass
         pass
 
-    def eliminarProductoById(
+    def eliminar_producto_by_id(
         self, idProducto, responseListener: ResponseListener | None = None
     ):
         query = "DELETE FROM producto WHERE id_producto = %s"
@@ -45,5 +45,55 @@ class InventoryController:
             if responseListener is not None and responseListener.onError is not None:
                 responseListener.onError("")
             pass
+
+        pass
+
+    def agregar_producto(
+        self, product: ProductModel, responseListener: ResponseListener | None = None
+    ):
+        try:
+            query = (
+                "INSERT INTO producto (id_producto, nombre_producto, categoria_producto, valor_producto, "
+                "cantidad_producto, id_recurso) VALUES(%s, %s, %s, %s, %s, %s)"
+            )
+            parameters = (
+                product.id_producto,
+                product.nombre_producto,
+                product.categoria_producto,
+                product.valor_producto,
+                product.cantidad_producto,
+                product.id_recurso,
+            )
+            ConfigSingleton().dbUtils.ejecutar_consulta(query, parameters)
+            self.obtener_all_productos(responseListener)
+
+        except:  # noqa: E722
+            self.sendError(responseListener, "")
+        pass
+
+    def edit_product(
+        self,
+        id_product,
+        product: ProductModel,
+        responseListener: ResponseListener | None = None,
+    ):
+        try:
+            query = (
+                "UPDATE producto SET id_producto = %s, nombre_producto = %s, categoria_producto = %s, "
+                "valor_producto = %s, cantidad_producto = %s, id_recurso = %s WHERE id_producto = %s"
+            )
+            parameters = (
+                product.id_producto,
+                product.nombre_producto,
+                product.categoria_producto,
+                product.valor_producto,
+                product.cantidad_producto,
+                product.id_recurso,
+                id_product,
+            )
+            ConfigSingleton().dbUtils.ejecutar_consulta(query, parameters)
+            self.obtener_all_productos(responseListener)
+        except:  # noqa: E722
+            self.sendError(responseListener, "")
 
         pass
