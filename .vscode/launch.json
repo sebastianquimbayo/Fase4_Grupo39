@@ -8,7 +8,7 @@
       "name": "Python Debugger: Current File",
       "type": "debugpy",
       "request": "launch",
-      "program": "PG.py",
+      "program": "app.py",
       "console": "integratedTerminal"
     }
   ]

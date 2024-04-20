@@ -53,9 +53,9 @@ class Producto:
 
         # *******************Menu******************************************
         # Acciones Menu
-        facturacion = Menu(menubar, tearoff=0)
-        inventarios = Menu(menubar, tearoff=0)
-        informacion = Menu(menubar, tearoff=0)
+        Menu(menubar, tearoff=0)
+        Menu(menubar, tearoff=0)
+        Menu(menubar, tearoff=0)
         menubar.add_command(
             label="Facturación", command=self.widgets_facturacion, compound=LEFT
         )

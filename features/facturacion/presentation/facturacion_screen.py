@@ -1,17 +1,30 @@
-from tkinter import ttk, Frame, Label, Button, Entry, Text
-from PIL import ImageTk, Image
+from tkinter import ttk, Frame, Label, Button, Entry, Text, LabelFrame, FLAT, StringVar
 
 
 # theme
 from config.theme import colors, fonts
 
-
-logoRoute = "assets/images/Logo_Sweet.png"
+from common.presentation.frame_logo import frame_logo
 
 
 class FacturacionScreen(Frame):
     def __init__(self, parent) -> None:
         Frame.__init__(self, parent)
+        # Variables
+        self.var_subtotal = StringVar()
+        self.var_impuesto = StringVar()
+        self.var_total = StringVar()
+        self.sub_total = 0
+        self.impuestos = 0
+        self.total = 0
+        self.build()
+        self.productos_seleccionados = []
+        pass
+
+    def build(self):
+       
+
+        # configuraciones
         self.config(bd=0, bg=colors.BACKGROUND_COLOR)
         self.grid(row=0, column=0, padx=5, pady=5)
 
@@ -26,17 +39,13 @@ class FacturacionScreen(Frame):
         self.titulo_buscador.grid(row=0, column=0)
 
         # ****************************** Logo empresa ***************************************
-        self.frame_logo.config(bd=0, bg=colors.BACKGROUND_COLOR)
-        self.frame_logo.grid(row=0, column=1, padx=5, pady=5)
-
-        logo = Image.open(logoRoute)
-        nueva_imagen = logo.resize((60, 60))
-        render = ImageTk.PhotoImage(nueva_imagen)
-        label_imagen = Label(self.frame_logo, image=render)
-        label_imagen.image = render
-        label_imagen.grid(row=0, column=0, padx=15, pady=5)
+        frame_logo(self)
 
         # ************************* Frame buscar *****************************
+        self.Label_titulo_buscador = LabelFrame(self)
+        self.frame_buscar_producto = LabelFrame(
+            self, text="Buscar producto", font=fonts.LABEL_SMALL, pady=10
+        )
         self.frame_buscar_producto.config(bd=2, bg=colors.BACKGROUND_COLOR)
         self.frame_buscar_producto.grid(row=2, column=0, padx=5, pady=5)
 
@@ -45,7 +54,7 @@ class FacturacionScreen(Frame):
             self.frame_buscar_producto,
             text="Buscar Por: ",
             bg=colors.BACKGROUND_COLOR,
-            font=("Comic Sans", 10, "bold"),
+            font=fonts.LABEL_SMALL,
         )
         self.label_buscar.grid(row=0, column=0, sticky="s", padx=5, pady=5)
         self.combo_buscar = ttk.Combobox(
@@ -60,7 +69,7 @@ class FacturacionScreen(Frame):
         label_codigo_codigo = Label(
             self.frame_buscar_producto,
             text="Codigo / Nombre del producto: ",
-            font=("Comic Sans", 10, "bold"),
+            font=fonts.LABEL_SMALL,
             bg=colors.BACKGROUND_COLOR,
         )
         label_codigo_codigo.grid(row=0, column=2, sticky="s", padx=5, pady=5)
@@ -69,55 +78,59 @@ class FacturacionScreen(Frame):
         self.codigo_nombre.grid(row=0, column=3, padx=10, pady=5)
 
         # ******************************* Frame marco Botones *********************************
+
+        self.frame_botones_fac = LabelFrame(self)
         self.frame_botones_fac.config(bd=0, bg=colors.BACKGROUND_COLOR)
         self.frame_botones_fac.grid(row=2, column=1, padx=5, pady=5)
 
         self.boton_buscar = Button(
             self.frame_botones_fac,
             text="BUSCAR",
-            command=self.buscar_productos,
+            # command=self.buscar_productos,
             height=2,
             width=20,
             bg="black",
             fg="white",
-            font=("Comic Sans", 10, "bold"),
+            font=fonts.LABEL_SMALL,
         )
         self.boton_buscar.grid(row=0, column=0, padx=5, pady=5)
 
         self.boton_agregar = Button(
             self.frame_botones_fac,
             text="AGREGAR +",
-            command=self.agregar_producto_fac,
+            # command=self.agregar_producto_fac,
             height=2,
             width=12,
             bg="#32EE11",
             fg="white",
-            font=("Comic Sans", 10, "bold"),
+            font=fonts.LABEL_SMALL,
         ).grid(row=0, column=2, padx=10, pady=15)
 
         self.boton_factura = Button(
             self.frame_botones_fac,
             text="FACTURAR",
-            command=self.facturar,
+            # command=self.facturar,
             height=2,
             width=12,
             bg="#FF9200",
             fg="white",
-            font=("Comic Sans", 10, "bold"),
+            font=fonts.LABEL_SMALL,
         ).grid(row=0, column=4, padx=10, pady=15)
 
         self.boton_factura = Button(
             self.frame_botones_fac,
             text="LIMPIAR",
-            command=self.limpiar,
+            # command=self.limpiar,
             height=2,
             width=12,
             bg="blue",
             fg="white",
-            font=("Comic Sans", 10, "bold"),
+            font=fonts.LABEL_SMALL,
         ).grid(row=0, column=6, padx=10, pady=15)
 
         # Etiquetas de costo y campos de entrada para subtotal
+
+        self.frame_costos = LabelFrame(self, bd=1, relief=FLAT, bg="#FDFF85", padx=10)
 
         self.frame_costos.config(bd=2, bg="#FDFF85")
         self.frame_costos.grid(row=5, column=0, padx=5, pady=5)
@@ -184,7 +197,9 @@ class FacturacionScreen(Frame):
         )
         texto_total.grid(row=1, column=5, padx=10)
 
+
         # Etiquetas de factura
+        self.frame_factura = Frame(self)
         self.frame_factura.config(bd=2, bg=colors.BACKGROUND_COLOR)
         self.frame_factura.grid(row=4, column=1, padx=5, pady=0, sticky="nsew")
 
@@ -193,5 +208,5 @@ class FacturacionScreen(Frame):
             self.frame_factura, font=("Dosis", 12, "bold"), bd=1, width=60, height=19
         )
         self.texto_recibo.grid(row=0, column=0, padx=5, pady=0, sticky="nsew")
-        self.productos_seleccionados = []
+        
         pass

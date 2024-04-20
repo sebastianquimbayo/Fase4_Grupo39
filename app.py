@@ -7,6 +7,7 @@ from config.config_singleton import ConfigSingleton
 # SCREENS
 from features.facturacion.presentation.facturacion_screen import FacturacionScreen
 from features.inventory.presentation.inventory_screen import InventoryScreen
+from common.presentation.information_screen import InformationScreen
 
 
 class App(Tk):
@@ -36,12 +37,17 @@ class App(Tk):
         menubar = Menu(self)
 
         file_menu = Menu(menubar, tearoff=0)
-        menubar.add_cascade(label="Screens", menu=file_menu)
+        menubar.add_cascade(label="Navegación", menu=file_menu)
         file_menu.add_command(
-            label="Screen 1", command=lambda: self.show_screen(FacturacionScreen)
+            label="Facturación", command=lambda: self.show_screen(FacturacionScreen)
         )
         file_menu.add_command(
             label="Inventory", command=lambda: self.show_screen(InventoryScreen)
+        )
+        file_about = Menu(menubar, tearoff=0)
+        menubar.add_cascade(label="Información", menu=file_about)
+        file_about.add_command(
+            label="Acerca de", command=lambda: self.show_screen(InformationScreen)
         )
         # file_menu.add_command(
         #     label="Screen 2", command=lambda: self.show_screen(Screen2)
@@ -58,3 +64,8 @@ class App(Tk):
         pass
 
     # def navigateToScreen(self, screen):
+
+
+
+if __name__ == "__main__":
+    App().initLoop()

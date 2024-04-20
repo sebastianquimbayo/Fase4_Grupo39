@@ -10,7 +10,6 @@ from tkinter import (
     Label,
     LabelFrame,
 )
-from PIL import ImageTk, Image
 
 from features.inventory.data.models.product_model import ProductModel
 
@@ -22,9 +21,7 @@ from features.inventory.presentation.inventory_functions import (
     send_edit_window,
 )
 from common.domain.response_llistener import ResponseListener
-
-
-logoRoute = "assets/images/Logo_Sweet.png"
+from common.presentation.frame_logo import frame_logo
 
 
 class InventoryScreen(Frame):
@@ -77,7 +74,7 @@ class InventoryScreen(Frame):
 
     def build(self):
         self.label_titulo = LabelFrame(self)
-        self.frame_logo = LabelFrame(self)
+        
         self.frame_registro = LabelFrame(
             self,
             text="Informacion del producto",
@@ -105,16 +102,8 @@ class InventoryScreen(Frame):
         self.titulo.grid(row=0, column=2)
 
         # # ****************************** Logo empresa ***************************************
-        self.frame_logo.config(bd=0, bg=colors.BACKGROUND_COLOR)
-        self.frame_logo.grid(row=1, column=0, padx=5, pady=5)
-
-        logo = Image.open(logoRoute)
-        nueva_imagen = logo.resize((60, 60))
-        render = ImageTk.PhotoImage(nueva_imagen)
-        label_imagen = Label(self.frame_logo, image=render)
-        label_imagen.image = render
-        label_imagen.grid(row=0, column=0, padx=15, pady=5)
-
+        frame_logo(self)
+        
         # ************************** Frame marco ********************************
         self.frame_registro.config(bd=2, bg=colors.FORM_BAKGROUND)
         self.frame_registro.grid(row=2, column=0, padx=5, pady=5)
