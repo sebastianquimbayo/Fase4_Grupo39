@@ -85,7 +85,7 @@ def send_edit_window(
 ):
     try:
         info = inventory_table.item(inventory_table.selection())
-        values= info['values']
+        values = info["values"]
         product = ProductModel(
             info["text"],
             values[0],
@@ -98,11 +98,9 @@ def send_edit_window(
         messagebox.showerror("ERROR", "Por favor selecciona un elemento")
         return
     ProductEditWindow(
-        parent, 
+        parent,
         product=product,
         inventory_controller=inventory_controller,
         on_success=on_success,
     ).mainloop()
     pass
-
-

@@ -1,8 +1,7 @@
 from mysql.connector import Error
 from tkinter import (
     messagebox,
-    END,
-    simpledialog
+    END
 )
 
 import mysql.connector
@@ -11,8 +10,6 @@ import random
 import datetime
 
 # theme
-
-from config.config_singleton import ConfigSingleton
 
 
 
@@ -59,65 +56,9 @@ class Producto:
         
     # ********************************* CRUD *************************************
    
-    def buscar_productos(self):
-        records = self.tree.get_children()
-        for element in records:
-            self.tree.delete(element)
 
-        if self.combo_buscar.get() == "Codigo":
-            query = "SELECT * FROM producto WHERE id_producto LIKE %s"
-            parameters = (self.codigo_nombre.get() + "%",)
-        else:
-            query = "SELECT * FROM producto WHERE nombre_producto LIKE %s"
-            parameters = ("%" + self.codigo_nombre.get() + "%",)
 
-        db_rows = ConfigSingleton().dbUtils.ejecutar_consulta(query, parameters)
 
-        for row in db_rows:
-            self.tree.insert(
-                "", 0, text=row[0], values=(row[1], row[2], row[3], row[4], row[5])
-            )
-
-        if not self.tree.get_children():
-            messagebox.showerror("ERROR", "Producto no encontrado")
-
-    def agregar_producto_fac(self):
-        # Variables
-        producto_sub_total = 0
-        precio_producto = 0
-        impuestos = 0
-        total = 0
-
-        try:
-            id_producto = self.tree.item(self.tree.selection())["text"]
-        except IndexError as e:
-            messagebox.showerror("ERROR", "Por favor selecciona un elemento")
-            return
-
-        nombre_producto = self.tree.item(self.tree.selection())["values"][0]
-
-        # Solicitar la cantidad de productos
-        cantidad = simpledialog.askinteger(
-            "Cantidad", f"¿Cuántos {nombre_producto} deseas llevar?"
-        )
-
-        if cantidad is None or cantidad <= 0:
-            messagebox.showerror("ERROR", "Cantidad inválida")
-            return
-
-        precio_producto = float(self.tree.item(self.tree.selection())["values"][2])
-        self.productos_seleccionados.append(
-            (nombre_producto, cantidad, precio_producto)
-        )
-        producto_sub_total += precio_producto * cantidad
-        self.sub_total += producto_sub_total
-        producto_impuestos = producto_sub_total * 0.16
-        self.impuestos += producto_impuestos
-        self.total = self.sub_total + self.impuestos
-
-        self.var_subtotal.set(f"$ {round(self.sub_total, 2)}")
-        self.var_impuesto.set(f"$ {round(self.impuestos, 2)}")
-        self.var_total.set(f"$ {round(self.total, 2)}")
 
     def facturar(self):
         # Actualiza la factura en el área de recibo
@@ -144,24 +85,12 @@ class Producto:
         impuestos = self.var_impuesto.get()
         total = self.var_total.get()
 
-        self.texto_recibo.insert(END, f"-" * 108)
+        self.texto_recibo.insert(END, "-" * 108)
         self.texto_recibo.insert(END, f" Sub-total: \t\t\t{subtotal}\n")
         self.texto_recibo.insert(END, f" Impuestos: \t\t\t{impuestos}\n")
         self.texto_recibo.insert(END, f" Total: \t\t\t{total}\n")
-        self.texto_recibo.insert(END, f"*" * 90 + "\n")
+        self.texto_recibo.insert(END, "*" * 90 + "\n")
         self.texto_recibo.insert(END, "Vuelva pronto")
-
-    def limpiar(self):
-        self.texto_recibo.delete(0.1, END)
-
-        self.sub_total = 0
-        self.impuestos = 0
-        self.total = 0
-
-        self.productos_seleccionados = []
-        self.var_subtotal.set("")
-        self.var_impuesto.set("")
-        self.var_total.set("")
 
     # ************************* OTRAS FUNCIONES **************************************
 

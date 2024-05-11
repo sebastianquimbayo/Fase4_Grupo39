@@ -1,32 +1,131 @@
-from tkinter import ttk, Frame, Label, Button, Entry, Text, LabelFrame, FLAT, StringVar
+from tkinter import (
+    ttk,
+    Frame,
+    Label,
+    Button,
+    Entry,
+    Text,
+    LabelFrame,
+    FLAT,
+    StringVar,
+    CENTER,
+    NO,
+    E,
+)
 
 
 # theme
 from config.theme import colors, fonts
 
 from common.presentation.frame_logo import frame_logo
+from features.facturacion.controllers.facturacion_controller import (
+    FacturacionController,
+)
+from features.facturacion.domain.search_type import SearchType
+from features.facturacion.presentation.facturacion_functions import (
+    agregar_producto,
+    buscar_producto,
+    clear_info,
+)
 
 
 class FacturacionScreen(Frame):
     def __init__(self, parent) -> None:
+        self.facturacion_controller = FacturacionController()
         Frame.__init__(self, parent)
+
         # Variables
         self.var_subtotal = StringVar()
         self.var_impuesto = StringVar()
         self.var_total = StringVar()
-        self.sub_total = 0
-        self.impuestos = 0
-        self.total = 0
+        # self.sub_total = 0
+        # self.impuestos = 0
+        # self.total = 0
         self.build()
-        self.productos_seleccionados = []
+        # self.productos_seleccionados = []
+        pass
+
+    def cleanTableAndUpdate(self):
+        children = self.facturacion_table.get_children()
+        for item in children:
+            self.facturacion_table.delete(item)
+        list = self.facturacion_controller.facturacion_state.productList
+        for product in list:
+            self.facturacion_table.insert(
+                "",
+                0,
+                text=product.id_producto,
+                values=(
+                    product.nombre_producto,
+                    product.categoria_producto,
+                    product.valor_producto,
+                    product.cantidad_producto,
+                    product.id_recurso,
+                ),
+            )
+        self.update()
+        pass
+
+    def update_info(self):
+        data = self.facturacion_controller.facturacion_state
+        self.var_subtotal.set(str(data.subtotal))
+        self.var_impuesto.set(str(data.impuestos))
+        self.var_total.set(str(data.total))
+        pass
+
+    def facturacion_table_create(self):
+        self.frame_tabla_crud.config(bd=2)
+        self.frame_tabla_crud.grid(row=4, column=0, padx=5, pady=5)
+        self.facturacion_table = ttk.Treeview(
+            self.frame_tabla_crud,
+            height=11,
+            columns=("columna1", "columna2", "columna3", "columna4", "columna5"),
+        )
+        # self.facturacion_table.bind("<<TreeviewSelect>>", self.table_item_selected)
+        self.facturacion_table.heading("#0", text="ID Producto", anchor=CENTER)
+        self.facturacion_table.column("#0", width=90, minwidth=75, stretch=NO)
+
+        self.facturacion_table.heading(
+            "columna1", text="Nombre Producto", anchor=CENTER
+        )
+        self.facturacion_table.column("columna1", width=150, minwidth=75, stretch=NO)
+
+        self.facturacion_table.heading("columna2", text="Categoria", anchor=CENTER)
+        self.facturacion_table.column("columna2", width=150, minwidth=75, stretch=NO)
+
+        self.facturacion_table.heading("columna3", text="Precio", anchor=CENTER)
+        self.facturacion_table.column("columna3", width=70, minwidth=60, stretch=NO)
+
+        self.facturacion_table.heading("columna4", text="Cantidad", anchor=CENTER)
+        self.facturacion_table.column("columna4", width=70, minwidth=60, stretch=NO)
+
+        self.facturacion_table.heading("columna5", text="ID Recurso", anchor=CENTER)
+
+        self.facturacion_table.grid(row=0, column=0, sticky=E)
+
+        list = self.facturacion_controller.facturacion_state.productList
+
+        for product in list:
+            self.facturacion_table.insert(
+                "",
+                0,
+                text=product.id_producto,
+                values=(
+                    product.nombre_producto,
+                    product.categoria_producto,
+                    product.valor_producto,
+                    product.cantidad_producto,
+                    product.id_recurso,
+                ),
+            )
         pass
 
     def build(self):
-       
-
         # configuraciones
+        self.frame_tabla_crud = LabelFrame(self)
         self.config(bd=0, bg=colors.BACKGROUND_COLOR)
         self.grid(row=0, column=0, padx=5, pady=5)
+        self.facturacion_table_create()
 
         # ************************ Titulo *********************************
         self.titulo_buscador = Label(
@@ -59,7 +158,7 @@ class FacturacionScreen(Frame):
         self.label_buscar.grid(row=0, column=0, sticky="s", padx=5, pady=5)
         self.combo_buscar = ttk.Combobox(
             self.frame_buscar_producto,
-            values=["Codigo", "Nombre"],
+            values=[SearchType.CODIGO.name, SearchType.NOMBRE.name],
             width=22,
             state="readonly",
         )
@@ -86,7 +185,12 @@ class FacturacionScreen(Frame):
         self.boton_buscar = Button(
             self.frame_botones_fac,
             text="BUSCAR",
-            # command=self.buscar_productos,
+            command=lambda: buscar_producto(
+                self.facturacion_controller,
+                on_success=lambda: self.cleanTableAndUpdate(),
+                search_text=self.codigo_nombre.get(),
+                search_type=getattr(SearchType, self.combo_buscar.get()),
+            ),
             height=2,
             width=20,
             bg="black",
@@ -98,7 +202,11 @@ class FacturacionScreen(Frame):
         self.boton_agregar = Button(
             self.frame_botones_fac,
             text="AGREGAR +",
-            # command=self.agregar_producto_fac,
+            command=lambda: agregar_producto(
+                self.facturacion_controller,
+                on_success=lambda: self.update_info(),
+                facturacion_table=self.facturacion_table,
+            ),
             height=2,
             width=12,
             bg="#32EE11",
@@ -120,7 +228,9 @@ class FacturacionScreen(Frame):
         self.boton_factura = Button(
             self.frame_botones_fac,
             text="LIMPIAR",
-            # command=self.limpiar,
+            command=lambda: clear_info(
+                self.facturacion_controller, on_success=lambda: self.update_info()
+            ),
             height=2,
             width=12,
             bg="blue",
@@ -197,7 +307,6 @@ class FacturacionScreen(Frame):
         )
         texto_total.grid(row=1, column=5, padx=10)
 
-
         # Etiquetas de factura
         self.frame_factura = Frame(self)
         self.frame_factura.config(bd=2, bg=colors.BACKGROUND_COLOR)
@@ -208,5 +317,5 @@ class FacturacionScreen(Frame):
             self.frame_factura, font=("Dosis", 12, "bold"), bd=1, width=60, height=19
         )
         self.texto_recibo.grid(row=0, column=0, padx=5, pady=0, sticky="nsew")
-        
+
         pass

@@ -8,3 +8,4 @@ para ejectuar, instalar las siguientes dependencias
 Pillow
 mysql-connector
 dotenv
+python-dotenv
