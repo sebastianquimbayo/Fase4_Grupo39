@@ -1,4 +1,5 @@
 from tkinter import (
+    END,
     ttk,
     Frame,
     Label,
@@ -26,6 +27,7 @@ from features.facturacion.presentation.facturacion_functions import (
     agregar_producto,
     buscar_producto,
     clear_info,
+    facturar,
 )
 
 
@@ -71,6 +73,7 @@ class FacturacionScreen(Frame):
         self.var_subtotal.set(str(data.subtotal))
         self.var_impuesto.set(str(data.impuestos))
         self.var_total.set(str(data.total))
+        self.texto_recibo.delete(1.0, END)
         pass
 
     def facturacion_table_create(self):
@@ -217,7 +220,10 @@ class FacturacionScreen(Frame):
         self.boton_factura = Button(
             self.frame_botones_fac,
             text="FACTURAR",
-            # command=self.facturar,
+            command=lambda: facturar(
+                self.texto_recibo,
+                self.facturacion_controller,
+            ),
             height=2,
             width=12,
             bg="#FF9200",
