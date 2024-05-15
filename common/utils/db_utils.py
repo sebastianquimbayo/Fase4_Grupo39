@@ -1,7 +1,6 @@
 from mysql.connector import Error
 from config.db.connection_manager import Connection
 
-logoRoute = "assets/images/Logo_Sweet.png"
 
 
 class DbUtils:
